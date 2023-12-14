@@ -1,0 +1,42 @@
+﻿@model ok.Models.Appunti
+
+@{
+    ViewData["Title"] = "appuntamenti";
+}
+
+<h1>appuntamenti</h1>
+
+<h4>Appunti</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="appuntamenti">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+         
+            <div class="form-group">
+                <label asp-for="titolo" class="control-label"></label>
+                <input asp-for="titolo" class="form-control" />
+                <span asp-validation-for="titolo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="descrizione" class="control-label"></label>
+                <input asp-for="descrizione" class="form-control" />
+                <span asp-validation-for="descrizione" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="data" class="control-label"></label>
+                <input asp-for="data" class="form-control" />
+                <span asp-validation-for="data" class="text-danger"></span>
+            </div>
+      
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

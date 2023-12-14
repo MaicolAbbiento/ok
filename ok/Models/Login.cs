@@ -11,8 +11,6 @@ namespace ok.Models
         public string Username { get; set; }
         public string Password { get; set; }
 
-        [NotMapped]
-        public string? ConfermaPassword { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appunti> Appunti { get; set; }

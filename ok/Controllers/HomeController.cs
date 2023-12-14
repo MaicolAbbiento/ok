@@ -52,44 +52,38 @@ namespace ok.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(Login model)
         {
-            if (ModelState.IsValid)
-            {
-                var claims = new List<Claim>
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, model.Username),
             };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var authProperties = new AuthenticationProperties
-                {
-                    // Alcune proprietà aggiuntive, se necessario
-                };
+            var authProperties = new AuthenticationProperties
+            {
+                // Alcune proprietà aggiuntive, se necessario
+            };
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
 
-                // Reindirizza l'utente alla pagina successiva al login
-                return RedirectToAction("Index");
-            }
-
-            // Se le credenziali non sono valide, mostra di nuovo il form di login con un messaggio di errore
-            ModelState.AddModelError(string.Empty, "Credenziali non valide.");
-            return View(model);
+            // Reindirizza l'utente alla pagina successiva al login
+            return RedirectToAction("Index");
         }
 
-        public IActionResult Privacy()
+        [Authorize]
+        public IActionResult appuntamenti()
         {
             return View();
         }
 
-        [Authorize]
-        public IActionResult pagina()
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public IActionResult appuntamenti(Appunti model)
         {
-            Model.SaveChanges();
             return View();
         }
 
