@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ok.Models;
 
@@ -11,9 +12,11 @@ using ok.Models;
 namespace ok.Migrations
 {
     [DbContext(typeof(Model))]
-    partial class ModelModelSnapshot : ModelSnapshot
+    [Migration("20231218083707_regist")]
+    partial class regist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,9 @@ namespace ok.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int>("UtentiidUtente")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("data")
                         .HasColumnType("datetime2");
 
@@ -44,7 +50,7 @@ namespace ok.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("idUtente");
+                    b.HasIndex("UtentiidUtente");
 
                     b.ToTable("Appunti");
                 });
@@ -76,13 +82,13 @@ namespace ok.Migrations
 
             modelBuilder.Entity("ok.Models.Appunti", b =>
                 {
-                    b.HasOne("ok.Models.Login", "Utente")
+                    b.HasOne("ok.Models.Login", "Utenti")
                         .WithMany("Appunti")
-                        .HasForeignKey("idUtente")
+                        .HasForeignKey("UtentiidUtente")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Utente");
+                    b.Navigation("Utenti");
                 });
 
             modelBuilder.Entity("ok.Models.Login", b =>

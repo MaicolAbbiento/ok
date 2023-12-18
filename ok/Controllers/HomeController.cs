@@ -23,55 +23,79 @@ namespace ok.Controllers
 
         private Model Model = new Model();
 
-        [Authorize]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public async Task<IActionResult> Logout()
         {
-            // Esegui il logout dell'utente
             await HttpContext.SignOutAsync();
 
-            // Log dell'evento di logout
-
-            // Reindirizza all'azione o alla pagina desiderata dopo il logout
-            return RedirectToAction("Index", "Home"); // Puoi specificare una diversa destinazione dopo il logout
+            return RedirectToAction("Login", "Home");
         }
 
-        // Azione per la pagina di login
         [HttpGet]
         public IActionResult Login()
         {
-            // Mostra la vista del form di login
             return View();
         }
 
-        // Azione per il post del form di login
         [HttpPost]
         public async Task<IActionResult> Login(Login model)
         {
-            var claims = new List<Claim>
+            Login? login = Model.Login.FirstOrDefault((e) => e.Username == model.Username && e.Password == model.Password);
+
+            if (login != null)
+            {
+                var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, model.Username),
             };
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperties = new AuthenticationProperties
+                var authProperties = new AuthenticationProperties
+                {
+                };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+                return RedirectToAction("appuntamenti");
+            }
+            else
             {
-                // Alcune proprietà aggiuntive, se necessario
-            };
+                ViewBag.err = "Username o password errati";
+            }
+            return View();
+        }
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+        public IActionResult regist()
+        {
+            return View();
+        }
 
-            // Reindirizza l'utente alla pagina successiva al login
-            return RedirectToAction("Index");
+        [HttpPost]
+        public IActionResult regist(Login model)
+        {
+            if (model.Password == model.ConfermaPassword)
+            {
+                Login? l = Model.Login.FirstOrDefault((e) => e.Username == model.Username);
+                if (l != null)
+                {
+                    Model.Login.Add(model);
+                    Model.SaveChanges();
+                    return RedirectToAction("login");
+                }
+                else
+                {
+                    ViewBag.utenteRegistrato = "utente gia registrato";
+                    return View();
+                }
+            }
+            else
+            {
+                ViewBag.err = "le password non coinscidono";
+                return View();
+            }
         }
 
         [Authorize]
@@ -80,11 +104,29 @@ namespace ok.Controllers
             return View();
         }
 
-        [ValidateAntiForgeryToken]
+        [AutoValidateAntiforgeryToken]
         [HttpPost]
         public IActionResult appuntamenti(Appunti model)
         {
+            if (model.data > DateTime.Now && model.titolo != null && model.descrizione != null)
+            {
+                string i = User.Identity.Name;
+                Login login = Model.Login.FirstOrDefault((e) => e.Username == i);
+                model.idUtente = login.idUtente;
+                Model.Appunti.Add(model);
+                Model.SaveChanges();
+                ViewBag.ap = "appuntamento aggiunto con successo";
+            }
             return View();
+        }
+
+        [Authorize]
+        public IActionResult home()
+        {
+            string i = User.Identity.Name;
+            Login login = Model.Login.FirstOrDefault((e) => e.Username == i);
+            List<Appunti> a = Model.Appunti.Where((e) => e.idUtente == login.idUtente).ToList();
+            return View(a);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -16,5 +16,12 @@ namespace ok.Models
                 optionsBuilder.UseSqlServer("data source =.\\SQLEXPRESS; initial catalog = core; TrustServerCertificate = True; integrated security = True; MultipleActiveResultSets = True; App = EntityFramework");
             }
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Appunti>()
+                .HasOne(a => a.Utente)
+                .WithMany(u => u.Appunti)
+                .HasForeignKey(a => a.idUtente);
+        }
     }
 }

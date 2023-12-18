@@ -11,6 +11,6 @@ namespace ok.Models
         public string? descrizione { get; set; }
         public DateTime data { get; set; }
         public int idUtente { get; set; }
-        public virtual Login Utenti { get; set; }
+        public Login Utente { get; set; }
     }
 }
