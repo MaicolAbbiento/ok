@@ -125,7 +125,9 @@ namespace ok.Controllers
         {
             string i = User.Identity.Name;
             Login login = Model.Login.FirstOrDefault((e) => e.Username == i);
-            List<Appunti> a = Model.Appunti.Where((e) => e.idUtente == login.idUtente).ToList();
+            List<Appunti> a = Model.Appunti.Where((e) => e.idUtente == login.idUtente && e.data > DateTime.Now
+
+            ).ToList();
             return View(a);
         }
 
